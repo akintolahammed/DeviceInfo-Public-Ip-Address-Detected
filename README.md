@@ -59,16 +59,18 @@ DeviceLogonEvents
 | summarize Attempts = count() by ActionType, RemoteIP, DeviceName
 | order by Attempts
 ```
+<img width="932" alt="image" src="https://github.com/user-attachments/assets/17893ee7-1336-4382-8c65-1a250a7bb82e" />
 
-![Brute Force Attempt](https://github.com/user-attachments/assets/17ba8bdd-bd3b-4469-a374-15046cf45b1c)
+
 
 ---
 
 The top 5 most failed login attempt IP addresses have not been able to successfully break into VM.
 
 ```kql
-let RemoteIPsInQuestion = dynamic(["87.251.75.99","194.180.49.96", "194.180.48.11", "149.102.152.2", "141.98.11.191", "92.63.197.55", "185.7.214.87"]);
+let RemoteIPsInQuestion = dynamic(["197.210.194.240","91.238.181.40", "88.214.25.74", "92.255.85.172", "185.42.12.59"]);
 DeviceLogonEvents
+|where DeviceName == "windows-target-1"
 | where LogonType has_any("Network", "Interactive", "RemoteInteractive", "Unlock")
 | where ActionType == "LogonSuccess"
 | where RemoteIP has_any(RemoteIPsInQuestion)
