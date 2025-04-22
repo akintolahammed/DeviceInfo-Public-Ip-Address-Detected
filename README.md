@@ -172,9 +172,9 @@ This chart clearly organizes the MITRE ATT&CK techniques (TTPs) used in this inc
 ---
 
 ## Created By:
-- **Author Name**: Trevino Parker  
+- **Author Name**: Hammed Akintola 
 - **Author Contact**: [LinkedIn](https://www.linkedin.com/in/hammed-akintola-215b7a282/)  
-- **Date**: Jan 2025
+- **Date**: April 2025
 
 ## Validated By:
 - **Reviewer Name**: Josh Madakor  
