@@ -34,15 +34,16 @@ DeviceProcessEvents
 | top 20 by Timestamp desc
 ```
 ```kql
-  DeviceInfo
-| where DeviceName == "windows-target-1" 
+ DeviceInfo
+| where DeviceName == "hammed-threatla" 
 | where IsInternetFacing == true
-| order by Timestamp desc
+| order by Timestamp
 ```
 
 ## Sample Output:
 
-![Screenshot 2025-01-13 152413](https://github.com/user-attachments/assets/96ce0467-2bf1-4b83-94d3-5dac66c828c6)
+![image](https://github.com/user-attachments/assets/3368a859-bef9-4c29-9d57-34bcb68a93d9)
+
 
 ---
 
@@ -52,14 +53,15 @@ Several bad actors have been discovered attempting to log into the target machin
 
 ```kql
 DeviceLogonEvents
-| where DeviceName == "windows-target-1"
-| where LogonType has_any("Network", "Interactive", "RemoteInteractive", "Unlock")
-| where ActionType == "LogonFailed"
-| where isnotempty(RemoteIP)
-| summarize Attempts = count() by ActionType, RemoteIP, DeviceName
-| order by Attempts
+|where DeviceName == "hammed-threatla"
+|where LogonType has_any("Network", "Interactive", "RemoteInteractive", "Unlock")
+|where ActionType == "LogonFailed"
+|where isnotempty(RemoteIP)
+|summarize Attempts = count() by ActionType, RemoteIP, DeviceName, AccountName
+|order by Attempts
 ```
-<img width="932" alt="image" src="https://github.com/user-attachments/assets/17893ee7-1336-4382-8c65-1a250a7bb82e" />
+<img width="946" alt="image" src="https://github.com/user-attachments/assets/64eafc97-b80d-49e3-8e63-25831d8b20a2" />
+
 
 
 
@@ -68,9 +70,9 @@ DeviceLogonEvents
 The top 5 most failed login attempt IP addresses have not been able to successfully break into VM.
 
 ```kql
-let RemoteIPsInQuestion = dynamic(["197.210.194.240","91.238.181.40", "88.214.25.74", "92.255.85.172", "185.42.12.59"]);
+let RemoteIPsInQuestion = dynamic(["103.237.86.97","4.240.63.212", "95.214.55.202", "103.237.86.156", "95.214.55.202"]);
 DeviceLogonEvents
-|where DeviceName == "windows-target-1"
+|where DeviceName == "hammed-threatla"
 | where LogonType has_any("Network", "Interactive", "RemoteInteractive", "Unlock")
 | where ActionType == "LogonSuccess"
 | where RemoteIP has_any(RemoteIPsInQuestion)
@@ -78,44 +80,52 @@ DeviceLogonEvents
 
 **<Query no results>**
 
+<img width="944" alt="image" src="https://github.com/user-attachments/assets/c0b900fe-8c5a-4bd2-9322-7e8d96525ebb" />
+
+
 ---
 
-The only successful remote/network logins in the last 30 days for 'labuser' account (57 total):
+The only successful remote/network logins in the last 30 days for 'labuser' account (64 total):
 
 ```kql
 DeviceLogonEvents
-| where DeviceName == "windows-target-1"
+| where DeviceName == "hammed-threatla"
 | where LogonType == "Network"
 | where ActionType == "LogonSuccess"
-| where AccountName == "labuser"
+| where AccountName == "akintola"
 | summarize count()
 ```
+<img width="907" alt="image" src="https://github.com/user-attachments/assets/f7d88500-993d-4ceb-8f47-e8b3f90cc620" />
+
 
 There were zero (0) failed logons for the 'labuser' account, indicating that a brute force attempt for this account didn't take place, and a 1-time password guess is unlikely.
 
 ```kql
 DeviceLogonEvents
-| where DeviceName == "windows-target-1"
+| where DeviceName == "hammed-threatla"
 | where LogonType == "Network"
 | where ActionType == "LogonFailed"
-| where AccountName == "labuser"
+| where AccountName == "akintola"
 | summarize count()
+
+
+
 ```
+<img width="938" alt="image" src="https://github.com/user-attachments/assets/b0d1699c-3e26-485e-a3b1-ded985fba415" />
 
 ---
 
-We checked all of the successful login IP addresses for the 'labuser' account to see if any of them were unusual or from an unexpected location. All were normal.
+We checked all of the successful login IP addresses for the 'akintola' account to see if any of them were unusual or from an unexpected location. All were normal.
 
 ```kql
 DeviceLogonEvents
-| where DeviceName == "windows-target-1"
+| where DeviceName == "hammed-threatla"
 | where LogonType == "Network"
 | where ActionType == "LogonSuccess"
-| where AccountName == "labuser"
+| where AccountName == "akintola"
 | summarize LoginCount = count() by DeviceName, ActionType, AccountName, RemoteIP
 ```
-
-![Successful Logins](https://github.com/user-attachments/assets/15512ee9-41d7-4fc2-8f5b-abae6948ff04)
+<img width="911" alt="image" src="https://github.com/user-attachments/assets/9709b905-ee8a-4c12-bc87-4a5e09e9f8c5" />
 
 ---
 
